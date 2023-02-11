@@ -35,10 +35,12 @@ class AbsenteeismModel():
         encoded_reasons = pd.get_dummies(df['Reason for Absence'], drop_first = True)
 
 #       Group Reasons
-        df["Reason_1"] = encoded_reasons.iloc[:,:14].max(axis=1)
+        df["Reason_1"] = encoded_reasons.loc[:,1:14].max(axis=1)
         df["Reason_2"] = encoded_reasons.loc[:,15:17].max(axis=1)
         df["Reason_3"] = encoded_reasons.loc[:,18:21].max(axis=1)
         df["Reason_4"] = encoded_reasons.loc[:,22:28].max(axis=1)
+#       fill null values with 0
+        df = df.fillna(value=0)
 
 #       Month values and day of the week
         df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y")
@@ -49,7 +51,7 @@ class AbsenteeismModel():
         df["Education"] = df["Education"].map({1:0, 2:1, 3:1, 4:1})
     
 #       Drop raw reasons and raw date and target variables
-        df.drop(columns=['Reason for Absence', 'Date', 'Absenteeism Time in Hours'], inplace = True)
+        df.drop(columns=['Reason for Absence', 'Date'], inplace = True)
     
 #       Keep checkpoint of preprocessed data with ordered columsn
         df = df[['Reason_1', 'Reason_2', 'Reason_3', 'Reason_4', 'Month Values',
